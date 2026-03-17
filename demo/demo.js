@@ -665,20 +665,6 @@ async function runDemoAction(action) {
     renderDemoMetrics();
     return;
   }
-
-  if (action === "custom") {
-    demoState.status = "Custom event";
-    setDemoEvent("Custom runtime marker added");
-    trackEvent("custom", { label: "glass-preview", source: "demo-page" });
-    return;
-  }
-
-  if (action === "clear") {
-    demoState.status = "Cleared";
-    setDemoEvent("Logs and API activity cleared");
-    clearDebugLogs();
-    clearApiActivity();
-  }
 }
 
 overlayRoot.addEventListener("click", async (event) => {

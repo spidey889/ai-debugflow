@@ -1,5 +1,7 @@
 # AI Debug Flow
 
+> A mobile-first, AI-friendly debug overlay for visible logs, event tracking, and API tracing.
+
 This repository documents a simple method for building features with AI one small step at a time. It also includes a small, reusable mobile-first debug overlay that developers can plug into their own app.
 
 The goal is practical:

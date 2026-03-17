@@ -14,32 +14,15 @@
   <body>
     <div class="ambient ambient--one" aria-hidden="true"></div>
     <div class="ambient ambient--two" aria-hidden="true"></div>
-    <div class="ambient ambient--three" aria-hidden="true"></div>
-
     <main class="demo-layout">
       <section class="hero-panel glass-panel">
         <div class="hero-copy">
           <p class="eyebrow">Mobile-first developer preview</p>
-          <h1>Beautiful in-app debugging, hidden behind one tiny notch.</h1>
+          <h1>One small notch. One clean debug tray.</h1>
           <p class="hero-text">
-            This page is a local demo. Tap the debug button at the top, open the tray,
-            and watch logs, request tracking, and runtime events appear in real time.
+            This is a simple localhost preview. Turn on the debug notch, open the tray,
+            and use the buttons below to generate generic runtime events.
           </p>
-        </div>
-
-        <div class="hero-actions">
-          <button class="primary-action" type="button" data-demo-action="auth">
-            Simulate Auth Success
-          </button>
-          <button class="secondary-action" type="button" data-demo-action="ui">
-            Add UI Event
-          </button>
-          <button class="secondary-action" type="button" data-demo-action="state">
-            Change State
-          </button>
-          <button class="secondary-action" type="button" data-demo-action="api">
-            Trigger API Call
-          </button>
         </div>
 
         <div class="stat-strip">
@@ -77,47 +60,28 @@
                 <strong id="demo-status">Waiting</strong>
               </div>
             </div>
-          </div>
-
-          <div class="feed-stack">
-            <article class="feed-card glass-tile">
-              <p class="tile-kicker">Last runtime event</p>
+            <div class="runtime-note">
+              <span class="tile-label">Last event</span>
               <strong id="demo-last-event">Demo booted</strong>
-              <p class="tile-note">
-                Use the buttons below or the tray actions to push new events.
-              </p>
-            </article>
-
-            <article class="feed-card glass-tile">
-              <p class="tile-kicker">What to click</p>
-              <ul class="tip-list">
-                <li>Tap the small debug notch at the top.</li>
-                <li>Open the tray and watch logs appear.</li>
-                <li>Use the category filter to focus on one flow.</li>
-              </ul>
-            </article>
+            </div>
           </div>
 
           <div class="action-grid">
             <button class="glass-action" type="button" data-demo-action="auth">
-              Auth Event
+              Auth
             </button>
             <button class="glass-action" type="button" data-demo-action="ui">
-              UI Event
+              UI
             </button>
             <button class="glass-action" type="button" data-demo-action="state">
-              State Flow
+              State
             </button>
             <button class="glass-action" type="button" data-demo-action="api">
-              API Flow
-            </button>
-            <button class="glass-action" type="button" data-demo-action="custom">
-              Custom Event
-            </button>
-            <button class="glass-action" type="button" data-demo-action="clear">
-              Clear All
+              API
             </button>
           </div>
+
+          <p class="demo-hint">Use the tray buttons to add a test log, clear logs, or run a simulated API call.</p>
         </div>
       </section>
     </main>
