@@ -1,10 +1,22 @@
 export type DebugLogType = "info" | "success" | "warning" | "error" | "api";
+export type DebugCategory = "api" | "auth" | "chat" | "state" | "custom";
+export type DebugEventPayload = unknown;
+
+export const DEBUG_LOG_CATEGORIES: DebugCategory[] = [
+  "api",
+  "auth",
+  "chat",
+  "state",
+  "custom",
+];
 
 export interface DebugLogEntry {
   id: string;
   message: string;
   type: DebugLogType;
+  category: DebugCategory;
   timestamp: string;
+  payload?: DebugEventPayload;
 }
 
 export interface DebugApiRequestEntry {
@@ -58,7 +70,13 @@ export interface DebugStore {
   subscribe(listener: () => void): () => void;
   setEnabled(enabled: boolean): void;
   toggleEnabled(): void;
-  addDebugLog(message: string, type?: DebugLogType): DebugLogEntry;
+  addDebugLog(
+    message: string,
+    type?: DebugLogType,
+    category?: DebugCategory,
+    payload?: DebugEventPayload,
+  ): DebugLogEntry;
+  trackEvent(category: DebugCategory, payload?: DebugEventPayload): DebugLogEntry;
   clearDebugLogs(): void;
   addApiRequest(input: AddApiRequestInput): DebugApiRequestEntry;
   addApiResponse(input: AddApiResponseInput): DebugApiResponseEntry;

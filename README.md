@@ -22,6 +22,7 @@ Version 1 focuses on:
 - a compact top tray
 - live event logs
 - fetch request and response tracking
+- AI-friendly event tracking with `debug.trackEvent(category, payload)`
 - simple developer action buttons
 
 Everything is generic and reusable. There is no product logic, no private code, and no backend dependency.
@@ -40,6 +41,7 @@ To keep this open-source friendly:
 - log runtime events, not secrets
 - avoid storing tokens, private payloads, or internal-only details
 - use the generic store and fetch tracker as a starting point
+- prefer consistent category-based tracking with `debug.trackEvent(...)`
 - wire the logger into your own flows only where it adds clarity
 
 ## Repo Layout
@@ -54,10 +56,26 @@ To keep this open-source friendly:
 
 Developers can use these files with AI tools by giving direct integration prompts such as:
 
-- "Wire this debug logger into my auth flow."
+- "Track auth flow using debug.trackEvent."
 - "Track API requests from this page."
 - "Add a debug button here that logs state changes."
 - "Use the debug tray to surface important runtime events."
+
+The built-in tracker categories are:
+
+- `api`
+- `auth`
+- `chat`
+- `state`
+- `custom`
+
+Example usage stays generic:
+
+```ts
+debug.trackEvent("auth", { action: "login", success: true });
+debug.trackEvent("chat", { message: "hello" });
+debug.trackEvent("state", { key: "roomId", value: 123 });
+```
 
 ## How To Use This Method
 

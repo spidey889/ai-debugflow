@@ -12,6 +12,7 @@ export function useDebugActions(store: DebugStore = debugStore) {
     setEnabled: store.setEnabled,
     toggleEnabled: store.toggleEnabled,
     addDebugLog: store.addDebugLog,
+    trackEvent: store.trackEvent,
     clearDebugLogs: store.clearDebugLogs,
     clearApiActivity: store.clearApiActivity,
     reset: store.reset,

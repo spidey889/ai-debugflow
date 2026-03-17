@@ -3,11 +3,13 @@ import { useState } from "react";
 import { debugStore } from "../debugStore";
 import { createTrackedFetch, isTrackedFetch, simulateTrackedApiCall } from "../fetchTracker";
 import type {
+  DebugCategory,
   DebugApiRequestEntry,
   DebugApiResponseEntry,
   DebugLogEntry,
   DebugStore,
 } from "../types";
+import { DEBUG_LOG_CATEGORIES } from "../types";
 import { useDebugStore } from "../useDebugStore";
 
 export interface DebugTrayProps {
@@ -17,6 +19,8 @@ export interface DebugTrayProps {
   className?: string;
   onSimulateApiCall?: () => Promise<unknown> | unknown;
 }
+
+type LogFilter = "all" | DebugCategory;
 
 function formatTime(timestamp: string) {
   return new Date(timestamp).toLocaleTimeString([], {
@@ -35,16 +39,76 @@ function truncateText(value: string, maxLength = 64) {
   return `${value.slice(0, maxLength - 1)}...`;
 }
 
+function formatPayloadEntryValue(value: unknown) {
+  if (value === null) {
+    return "null";
+  }
+
+  if (value === undefined) {
+    return "undefined";
+  }
+
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+    return String(value);
+  }
+
+  if (Array.isArray(value)) {
+    return truncateText(JSON.stringify(value));
+  }
+
+  if (typeof value === "object") {
+    return "{...}";
+  }
+
+  return String(value);
+}
+
+function formatPayloadPreview(payload: DebugLogEntry["payload"]) {
+  if (payload === null || payload === undefined) {
+    return "";
+  }
+
+  if (typeof payload === "string" || typeof payload === "number" || typeof payload === "boolean") {
+    return String(payload);
+  }
+
+  if (Array.isArray(payload)) {
+    return truncateText(JSON.stringify(payload));
+  }
+
+  if (typeof payload === "object") {
+    return truncateText(
+      Object.entries(payload as Record<string, unknown>)
+        .slice(0, 4)
+        .map(([key, value]) => `${key}: ${formatPayloadEntryValue(value)}`)
+        .join(" | "),
+      84,
+    );
+  }
+
+  return "";
+}
+
 function LogItem({ entry }: { entry: DebugLogEntry }) {
+  const payloadPreview = formatPayloadPreview(entry.payload);
+
   return (
-    <li className="debug-tray__item" data-log-type={entry.type}>
+    <li
+      className="debug-tray__item"
+      data-log-type={entry.type}
+      data-log-category={entry.category}
+    >
       <div className="debug-tray__item-row">
-        <span className="debug-tray__badge">{entry.type}</span>
+        <div className="debug-tray__response-meta">
+          <span className="debug-tray__badge debug-tray__badge--category">{entry.category}</span>
+          <span className="debug-tray__badge">{entry.type}</span>
+        </div>
         <time className="debug-tray__time" dateTime={entry.timestamp}>
           {formatTime(entry.timestamp)}
         </time>
       </div>
       <p className="debug-tray__text">{entry.message}</p>
+      {payloadPreview ? <p className="debug-tray__meta">{payloadPreview}</p> : null}
     </li>
   );
 }
@@ -104,11 +168,14 @@ export function DebugTray({
 }: DebugTrayProps) {
   const { enabled, logs, apiRequests, apiResponses } = useDebugStore(store);
   const [isSimulating, setIsSimulating] = useState(false);
+  const [logFilter, setLogFilter] = useState<LogFilter>("all");
 
   const classes = ["debug-tray", enabled ? "is-open" : "", className].filter(Boolean).join(" ");
   const reversedLogs = [...logs].reverse();
   const reversedRequests = [...apiRequests].reverse();
   const reversedResponses = [...apiResponses].reverse();
+  const filteredLogs =
+    logFilter === "all" ? reversedLogs : reversedLogs.filter((entry) => entry.category === logFilter);
 
   const handleSimulateApiCall = async () => {
     setIsSimulating(true);
@@ -158,7 +225,13 @@ export function DebugTray({
           <button
             type="button"
             className="debug-tray__button"
-            onClick={() => store.addDebugLog("Manual test log from the debug tray.", "info")}
+            onClick={() =>
+              store.trackEvent("custom", {
+                action: "test-log",
+                source: "debug-tray",
+                message: "Manual test log from the debug tray.",
+              })
+            }
           >
             Add Test Log
           </button>
@@ -183,13 +256,34 @@ export function DebugTray({
           <section className="debug-tray__section" aria-label="Live event logs">
             <div className="debug-tray__section-head">
               <h3>Live Event Logs</h3>
-              <span>{logs.length}</span>
+              <span>{filteredLogs.length}</span>
+            </div>
+            <div className="debug-tray__filters" role="group" aria-label="Filter logs by category">
+              <button
+                type="button"
+                className={`debug-tray__filter ${logFilter === "all" ? "is-active" : ""}`}
+                onClick={() => setLogFilter("all")}
+              >
+                all
+              </button>
+              {DEBUG_LOG_CATEGORIES.map((category) => (
+                <button
+                  key={category}
+                  type="button"
+                  className={`debug-tray__filter ${logFilter === category ? "is-active" : ""}`}
+                  onClick={() => setLogFilter(category)}
+                >
+                  {category}
+                </button>
+              ))}
             </div>
             {reversedLogs.length === 0 ? (
               <EmptyState message="No logs yet. Turn on debug mode and add one small event at a time." />
+            ) : filteredLogs.length === 0 ? (
+              <EmptyState message="No logs match the selected category filter." />
             ) : (
               <ul className="debug-tray__list">
-                {reversedLogs.map((entry) => (
+                {filteredLogs.map((entry) => (
                   <LogItem key={entry.id} entry={entry} />
                 ))}
               </ul>

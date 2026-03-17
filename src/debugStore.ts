@@ -1,8 +1,10 @@
 import type {
   AddApiRequestInput,
   AddApiResponseInput,
+  DebugCategory,
   DebugApiRequestEntry,
   DebugApiResponseEntry,
+  DebugEventPayload,
   DebugLogEntry,
   DebugLogType,
   DebugState,
@@ -18,6 +20,100 @@ const createTimestamp = () => new Date().toISOString();
 
 function trimEntries<T>(entries: T[], nextEntry: T, limit: number): T[] {
   return [...entries, nextEntry].slice(-limit);
+}
+
+function getDefaultCategory(type: DebugLogType, category?: DebugCategory): DebugCategory {
+  if (category) {
+    return category;
+  }
+
+  return type === "api" ? "api" : "custom";
+}
+
+function formatPayloadValue(value: unknown): string {
+  if (value === null) {
+    return "null";
+  }
+
+  if (value === undefined) {
+    return "undefined";
+  }
+
+  if (typeof value === "string") {
+    return value.length > 48 ? `${value.slice(0, 47)}...` : value;
+  }
+
+  if (typeof value === "number" || typeof value === "boolean") {
+    return String(value);
+  }
+
+  if (Array.isArray(value)) {
+    if (value.length === 0) {
+      return "[]";
+    }
+
+    return `[${value.slice(0, 3).map(formatPayloadValue).join(", ")}${value.length > 3 ? ", ..." : ""}]`;
+  }
+
+  if (typeof value === "object") {
+    return "{...}";
+  }
+
+  return String(value);
+}
+
+function summarizePayload(payload?: DebugEventPayload): string {
+  if (payload === null || payload === undefined) {
+    return "";
+  }
+
+  if (typeof payload === "string" || typeof payload === "number" || typeof payload === "boolean") {
+    return String(payload);
+  }
+
+  if (Array.isArray(payload)) {
+    return formatPayloadValue(payload);
+  }
+
+  if (typeof payload === "object") {
+    const entries = Object.entries(payload as Record<string, unknown>).slice(0, 4);
+
+    if (entries.length === 0) {
+      return "event";
+    }
+
+    return entries.map(([key, value]) => `${key}=${formatPayloadValue(value)}`).join(" ");
+  }
+
+  return "event";
+}
+
+function inferTrackEventType(
+  category: DebugCategory,
+  payload?: DebugEventPayload,
+): DebugLogType {
+  if (payload && typeof payload === "object" && !Array.isArray(payload)) {
+    const record = payload as Record<string, unknown>;
+
+    if (record.error) {
+      return "error";
+    }
+
+    if (record.success === true) {
+      return "success";
+    }
+
+    if (record.success === false) {
+      return "warning";
+    }
+  }
+
+  return category === "api" ? "api" : "info";
+}
+
+function createTrackEventMessage(category: DebugCategory, payload?: DebugEventPayload): string {
+  const summary = summarizePayload(payload);
+  return summary ? `${category}: ${summary}` : `${category} event`;
 }
 
 export function createDebugStore(
@@ -61,12 +157,37 @@ export function createDebugStore(
       setState((currentState) => ({ ...currentState, enabled: !currentState.enabled }));
     },
 
-    addDebugLog(message, type: DebugLogType = "info") {
+    addDebugLog(
+      message,
+      type: DebugLogType = "info",
+      category?: DebugCategory,
+      payload?: DebugEventPayload,
+    ) {
       const entry: DebugLogEntry = {
         id: createId("log"),
         message,
         type,
+        category: getDefaultCategory(type, category),
         timestamp: createTimestamp(),
+        payload,
+      };
+
+      setState((currentState) => ({
+        ...currentState,
+        logs: trimEntries(currentState.logs, entry, currentState.maxLogs),
+      }));
+
+      return entry;
+    },
+
+    trackEvent(category, payload) {
+      const entry: DebugLogEntry = {
+        id: createId("log"),
+        message: createTrackEventMessage(category, payload),
+        type: inferTrackEventType(category, payload),
+        category,
+        timestamp: createTimestamp(),
+        payload,
       };
 
       setState((currentState) => ({
@@ -146,7 +267,30 @@ export function createDebugStore(
 
 export const debugStore = createDebugStore();
 
-export const addDebugLog = (message: string, type?: DebugLogType) =>
-  debugStore.addDebugLog(message, type);
+export const addDebugLog = (
+  message: string,
+  type?: DebugLogType,
+  category?: DebugCategory,
+  payload?: DebugEventPayload,
+) => debugStore.addDebugLog(message, type, category, payload);
+
+export const trackEvent = (category: DebugCategory, payload?: DebugEventPayload) =>
+  debugStore.trackEvent(category, payload);
 
 export const clearDebugLogs = () => debugStore.clearDebugLogs();
+export const clearApiActivity = () => debugStore.clearApiActivity();
+
+export const debug = {
+  getState: () => debugStore.getState(),
+  addDebugLog: (
+    message: string,
+    type?: DebugLogType,
+    category?: DebugCategory,
+    payload?: DebugEventPayload,
+  ) => debugStore.addDebugLog(message, type, category, payload),
+  trackEvent: (category: DebugCategory, payload?: DebugEventPayload) =>
+    debugStore.trackEvent(category, payload),
+  clearDebugLogs: () => debugStore.clearDebugLogs(),
+  clearApiActivity: () => debugStore.clearApiActivity(),
+  reset: () => debugStore.reset(),
+};

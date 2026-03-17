@@ -4,7 +4,7 @@ This `src/` folder provides a small mobile-first debug overlay for developers. I
 
 ## What To Reuse
 
-- `debugStore.ts` provides the shared debug state and helpers
+- `debugStore.ts` provides the shared debug state, helper functions, and the `debug` convenience object
 - `fetchTracker.ts` provides generic fetch tracking
 - `components/DebugToggle.tsx` provides the compact mobile toggle
 - `components/DebugTray.tsx` provides the top slide-down tray
@@ -17,14 +17,36 @@ This `src/` folder provides a small mobile-first debug overlay for developers. I
 2. Import the CSS so the toggle and tray stay compact and readable on mobile.
 3. Use `DebugOverlay` for the fastest setup, or wire `DebugToggle` and `DebugTray` separately.
 4. Use `addDebugLog(message, type)` to surface runtime events that help explain the current flow.
-5. Use the fetch tracker to observe request and response activity without depending on a specific backend.
-6. Keep logged data generic and avoid sensitive details.
+5. Use `debug.trackEvent(category, payload)` when you want a consistent AI-friendly tracking pattern.
+6. Use the fetch tracker to observe request and response activity without depending on a specific backend.
+7. Keep logged data generic and avoid sensitive details.
+
+## Tracker Categories
+
+The built-in event categories are:
+
+- `api`
+- `auth`
+- `chat`
+- `state`
+- `custom`
+
+Example patterns:
+
+```ts
+debug.trackEvent("auth", { action: "login", success: true });
+debug.trackEvent("chat", { message: "hello" });
+debug.trackEvent("state", { key: "roomId", value: 123 });
+debug.trackEvent("custom", { label: "drawer-opened" });
+```
 
 ## Prompt-Friendly Examples
 
 You can ask an AI coding tool to connect this system with prompts like:
 
-- "Wire this debug logger into my auth flow."
+- "Track auth flow using debug.trackEvent."
+- "Log important state changes."
+- "Add debug tracking to API calls."
 - "Track API requests from this page."
 - "Add a debug button here that logs state changes."
 - "Use the debug tray to surface important runtime events."

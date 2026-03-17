@@ -160,6 +160,13 @@
   overflow-x: auto;
 }
 
+.debug-tray__filters {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.7rem;
+  overflow-x: auto;
+}
+
 .debug-tray__button {
   flex: 0 0 auto;
   padding: 0.7rem 0.9rem;
@@ -181,6 +188,26 @@
 .debug-tray__button--primary {
   border-color: rgba(45, 212, 191, 0.35);
   color: #99f6e4;
+}
+
+.debug-tray__filter {
+  flex: 0 0 auto;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 999px;
+  background: rgba(8, 12, 21, 0.92);
+  color: #94a3b8;
+  font: inherit;
+  font-size: 0.74rem;
+  font-weight: 600;
+  text-transform: lowercase;
+  cursor: pointer;
+}
+
+.debug-tray__filter.is-active {
+  border-color: rgba(96, 165, 250, 0.3);
+  color: #dbeafe;
+  background: rgba(30, 41, 59, 0.95);
 }
 
 .debug-tray__sections {
@@ -247,6 +274,26 @@
 
 .debug-tray__item[data-log-type="api"] {
   border-color: rgba(96, 165, 250, 0.28);
+}
+
+.debug-tray__item[data-log-category="auth"] .debug-tray__badge--category {
+  color: #f9a8d4;
+}
+
+.debug-tray__item[data-log-category="chat"] .debug-tray__badge--category {
+  color: #c4b5fd;
+}
+
+.debug-tray__item[data-log-category="state"] .debug-tray__badge--category {
+  color: #fde68a;
+}
+
+.debug-tray__item[data-log-category="api"] .debug-tray__badge--category {
+  color: #93c5fd;
+}
+
+.debug-tray__item[data-log-category="custom"] .debug-tray__badge--category {
+  color: #cbd5e1;
 }
 
 .debug-tray__item--api[data-response-state="success"] {

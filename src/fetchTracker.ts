@@ -68,7 +68,11 @@ export function createTrackedFetch(
       timestamp: createTimestamp(),
     });
 
-    store.addDebugLog(`${method} ${url}`, "api");
+    store.trackEvent("api", {
+      phase: "request",
+      method,
+      url,
+    });
 
     try {
       const response = await originalFetch(input, init);
@@ -84,10 +88,14 @@ export function createTrackedFetch(
         timestamp: createTimestamp(),
       });
 
-      store.addDebugLog(
-        `${method} ${url} -> ${response.status}`,
-        response.ok ? "api" : "warning",
-      );
+      store.trackEvent("api", {
+        phase: "response",
+        method,
+        url,
+        status: response.status,
+        success: response.ok,
+        durationMs,
+      });
 
       return response;
     } catch (error) {
@@ -104,7 +112,14 @@ export function createTrackedFetch(
         timestamp: createTimestamp(),
       });
 
-      store.addDebugLog(`${method} ${url} failed: ${message}`, "error");
+      store.trackEvent("api", {
+        phase: "response",
+        method,
+        url,
+        success: false,
+        durationMs: Date.now() - startedAt,
+        error: message,
+      });
 
       throw error;
     }
