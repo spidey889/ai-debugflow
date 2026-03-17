@@ -280,7 +280,7 @@
   color: #f9a8d4;
 }
 
-.debug-tray__item[data-log-category="chat"] .debug-tray__badge--category {
+.debug-tray__item[data-log-category="ui"] .debug-tray__badge--category {
   color: #c4b5fd;
 }
 

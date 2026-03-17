@@ -1,11 +1,11 @@
 export type DebugLogType = "info" | "success" | "warning" | "error" | "api";
-export type DebugCategory = "api" | "auth" | "chat" | "state" | "custom";
+export type DebugCategory = "api" | "auth" | "ui" | "state" | "custom";
 export type DebugEventPayload = unknown;
 
 export const DEBUG_LOG_CATEGORIES: DebugCategory[] = [
   "api",
   "auth",
-  "chat",
+  "ui",
   "state",
   "custom",
 ];

@@ -1,4 +1,4 @@
-const DEBUG_CATEGORIES = ["api", "auth", "chat", "state", "custom"];
+const DEBUG_CATEGORIES = ["api", "auth", "ui", "state", "custom"];
 const TRACKED_FETCH_FLAG = "__ai_debugflow_tracked_fetch__";
 
 const state = {
@@ -11,7 +11,7 @@ const state = {
 };
 
 const demoState = {
-  roomId: 101,
+  viewId: 101,
   status: "Waiting",
   lastEvent: "Demo booted",
 };
@@ -600,7 +600,7 @@ function renderDemoMetrics() {
   const logCount = document.getElementById("demo-log-count");
   const requestCount = document.getElementById("demo-request-count");
   const responseCount = document.getElementById("demo-response-count");
-  const roomId = document.getElementById("demo-room-id");
+  const viewId = document.getElementById("demo-view-id");
   const status = document.getElementById("demo-status");
   const lastEvent = document.getElementById("demo-last-event");
 
@@ -616,8 +616,8 @@ function renderDemoMetrics() {
     responseCount.textContent = String(state.apiResponses.length);
   }
 
-  if (roomId) {
-    roomId.textContent = String(demoState.roomId);
+  if (viewId) {
+    viewId.textContent = String(demoState.viewId);
   }
 
   if (status) {
@@ -638,22 +638,22 @@ async function runDemoAction(action) {
   if (action === "auth") {
     demoState.status = "Signed in";
     setDemoEvent("Auth success event sent");
-    trackEvent("auth", { action: "login", success: true, method: "magic-link" });
+    trackEvent("auth", { action: "login", success: true });
     return;
   }
 
-  if (action === "chat") {
-    demoState.status = "Chat active";
-    setDemoEvent("Chat event sent");
-    trackEvent("chat", { message: "hello from localhost", room: "general" });
+  if (action === "ui") {
+    demoState.status = "Panel opened";
+    setDemoEvent("UI event sent");
+    trackEvent("ui", { action: "open-panel", surface: "demo-card" });
     return;
   }
 
   if (action === "state") {
-    demoState.roomId += 1;
+    demoState.viewId += 1;
     demoState.status = "State updated";
-    setDemoEvent(`State changed to room ${demoState.roomId}`);
-    trackEvent("state", { key: "roomId", value: demoState.roomId });
+    setDemoEvent(`State changed to view ${demoState.viewId}`);
+    trackEvent("state", { key: "viewId", value: demoState.viewId });
     return;
   }
 
@@ -767,4 +767,4 @@ renderOverlay();
 renderDemoMetrics();
 
 trackEvent("custom", { label: "demo-ready" });
-trackEvent("state", { key: "roomId", value: demoState.roomId });
+trackEvent("state", { key: "viewId", value: demoState.viewId });

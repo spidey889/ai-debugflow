@@ -65,7 +65,7 @@ The built-in tracker categories are:
 
 - `api`
 - `auth`
-- `chat`
+- `ui`
 - `state`
 - `custom`
 
@@ -73,8 +73,8 @@ Example usage stays generic:
 
 ```ts
 debug.trackEvent("auth", { action: "login", success: true });
-debug.trackEvent("chat", { message: "hello" });
-debug.trackEvent("state", { key: "roomId", value: 123 });
+debug.trackEvent("ui", { action: "open-panel" });
+debug.trackEvent("state", { key: "viewId", value: 123 });
 ```
 
 ## How To Use This Method
