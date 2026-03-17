@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Debug Flow Demo</title>
+    <meta
+      name="description"
+      content="A lightweight glass-style demo for the AI Debug Flow mobile-first debug overlay."
+    />
+    <link rel="stylesheet" href="./src/debug-overlay.css" />
+    <link rel="stylesheet" href="./demo/demo.css" />
+  </head>
+  <body>
+    <div class="ambient ambient--one" aria-hidden="true"></div>
+    <div class="ambient ambient--two" aria-hidden="true"></div>
+    <div class="ambient ambient--three" aria-hidden="true"></div>
+
+    <main class="demo-layout">
+      <section class="hero-panel glass-panel">
+        <div class="hero-copy">
+          <p class="eyebrow">Mobile-first developer preview</p>
+          <h1>Beautiful in-app debugging, hidden behind one tiny notch.</h1>
+          <p class="hero-text">
+            This page is a local demo. Tap the debug button at the top, open the tray,
+            and watch logs, request tracking, and runtime events appear in real time.
+          </p>
+        </div>
+
+        <div class="hero-actions">
+          <button class="primary-action" type="button" data-demo-action="auth">
+            Simulate Auth Success
+          </button>
+          <button class="secondary-action" type="button" data-demo-action="chat">
+            Add Chat Event
+          </button>
+          <button class="secondary-action" type="button" data-demo-action="state">
+            Change State
+          </button>
+          <button class="secondary-action" type="button" data-demo-action="api">
+            Trigger API Call
+          </button>
+        </div>
+
+        <div class="stat-strip">
+          <div class="stat-card glass-chip">
+            <span class="stat-label">Logs</span>
+            <strong id="demo-log-count">0</strong>
+          </div>
+          <div class="stat-card glass-chip">
+            <span class="stat-label">Requests</span>
+            <strong id="demo-request-count">0</strong>
+          </div>
+          <div class="stat-card glass-chip">
+            <span class="stat-label">Responses</span>
+            <strong id="demo-response-count">0</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="phone-stage">
+        <div class="phone-frame glass-panel">
+          <div class="phone-topbar">
+            <span class="glass-chip">Live localhost preview</span>
+            <span class="signal-dot"></span>
+          </div>
+
+          <div class="phone-hero glass-tile">
+            <p class="tile-kicker">Current state</p>
+            <div class="tile-grid">
+              <div>
+                <span class="tile-label">Room ID</span>
+                <strong id="demo-room-id">101</strong>
+              </div>
+              <div>
+                <span class="tile-label">Status</span>
+                <strong id="demo-status">Waiting</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="feed-stack">
+            <article class="feed-card glass-tile">
+              <p class="tile-kicker">Last runtime event</p>
+              <strong id="demo-last-event">Demo booted</strong>
+              <p class="tile-note">
+                Use the buttons below or the tray actions to push new events.
+              </p>
+            </article>
+
+            <article class="feed-card glass-tile">
+              <p class="tile-kicker">What to click</p>
+              <ul class="tip-list">
+                <li>Tap the small debug notch at the top.</li>
+                <li>Open the tray and watch logs appear.</li>
+                <li>Use the category filter to focus on one flow.</li>
+              </ul>
+            </article>
+          </div>
+
+          <div class="action-grid">
+            <button class="glass-action" type="button" data-demo-action="auth">
+              Auth Flow
+            </button>
+            <button class="glass-action" type="button" data-demo-action="chat">
+              Chat Flow
+            </button>
+            <button class="glass-action" type="button" data-demo-action="state">
+              State Flow
+            </button>
+            <button class="glass-action" type="button" data-demo-action="api">
+              API Flow
+            </button>
+            <button class="glass-action" type="button" data-demo-action="custom">
+              Custom Event
+            </button>
+            <button class="glass-action" type="button" data-demo-action="clear">
+              Clear All
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div id="debug-overlay-root"></div>
+
+    <script type="module" src="./demo/demo.js"></script>
+  </body>
+</html>
