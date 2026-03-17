@@ -1,6 +1,6 @@
 # AI Debug Flow
 
-This repository documents a simple method for building features with AI one small step at a time.
+This repository documents a simple method for building features with AI one small step at a time. It also includes a small, reusable mobile-first debug overlay that developers can plug into their own app.
 
 The goal is practical:
 
@@ -12,11 +12,52 @@ The goal is practical:
 
 This is not a theory-heavy framework. It is a working habit for building with less confusion and less rework.
 
-## What Is In This Repo
+## What This Tool Is
 
-- [`method/step-by-step-building.md`](C:/Users/vinit/OneDrive/Desktop/ai-debugflow/method/step-by-step-building.md) explains the core workflow
-- [`method/debug-mode-pattern.md`](C:/Users/vinit/OneDrive/Desktop/ai-debugflow/method/debug-mode-pattern.md) explains how to use a debug toggle and visible logs
-- [`method/notifications-method.md`](C:/Users/vinit/OneDrive/Desktop/ai-debugflow/method/notifications-method.md) shows how to build a notification system incrementally
+The debug overlay in `src/` is a lightweight in-app developer tool. It stays hidden until debug mode is enabled, then slides down from the top like a compact notch-style tray.
+
+Version 1 focuses on:
+
+- a mobile-first debug toggle
+- a compact top tray
+- live event logs
+- fetch request and response tracking
+- simple developer action buttons
+
+Everything is generic and reusable. There is no product logic, no private code, and no backend dependency.
+
+## Why Visible In-App Debugging Helps
+
+Visible logs shorten the gap between "something feels wrong" and "here is the exact step that failed."
+
+This is especially useful on mobile, where browser devtools are often less convenient and small runtime issues can be harder to trace. A compact in-app tray helps developers inspect behavior without turning the interface into a normal settings screen.
+
+## Safe Integration
+
+To keep this open-source friendly:
+
+- keep the overlay behind a developer-facing toggle
+- log runtime events, not secrets
+- avoid storing tokens, private payloads, or internal-only details
+- use the generic store and fetch tracker as a starting point
+- wire the logger into your own flows only where it adds clarity
+
+## Repo Layout
+
+- [`method/step-by-step-building.md`](./method/step-by-step-building.md) explains the core workflow
+- [`method/debug-mode-pattern.md`](./method/debug-mode-pattern.md) explains why a visible debug toggle helps
+- [`method/notifications-method.md`](./method/notifications-method.md) shows how to build notifications incrementally
+- [`src/index.ts`](./src/index.ts) exports the reusable debug overlay pieces
+- [`src/integration-notes.md`](./src/integration-notes.md) shows how to integrate the overlay into another system
+
+## Prompt-Friendly Notes
+
+Developers can use these files with AI tools by giving direct integration prompts such as:
+
+- "Wire this debug logger into my auth flow."
+- "Track API requests from this page."
+- "Add a debug button here that logs state changes."
+- "Use the debug tray to surface important runtime events."
 
 ## How To Use This Method
 
